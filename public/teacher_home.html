@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard - EDUTRACK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e0eafc, #cfdef3);
+            color: #2d3436;
+            transition: background 0.5s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1e272e, #485460);
+            color: #dfe6e9;
+        }
+
+        .site-title {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            z-index: 1002;
+        }
+
+        .site-title span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: letterPop 0.5s ease forwards;
+            color: #0984e3;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        body.dark-mode .site-title span {
+            color: #00b894;
+        }
+
+        @keyframes letterPop {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .site-title span:nth-child(1) { animation-delay: 0.1s; }
+        .site-title span:nth-child(2) { animation-delay: 0.15s; }
+        .site-title span:nth-child(3) { animation-delay: 0.2s; }
+        .site-title span:nth-child(4) { animation-delay: 0.25s; }
+        .site-title span:nth-child(5) { animation-delay: 0.3s; }
+        .site-title span:nth-child(6) { animation-delay: 0.35s; }
+        .site-title span:nth-child(7) { animation-delay: 0.4s; }
+        .site-title span:nth-child(8) { animation-delay: 0.45s; }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            transition: left 0.3s ease;
+            z-index: 1000;
+        }
+
+        .navbar.active {
+            left: 0;
+        }
+
+        .navbar ul {
+            list-style: none;
+            margin-top: 60px;
+        }
+
+        .navbar ul li {
+            margin: 20px 0;
+        }
+
+        .navbar ul li a {
+            color: #2d3436;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: block;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+            cursor: pointer;
+        }
+
+        body.dark-mode .navbar ul li a {
+            color: #dfe6e9;
+        }
+
+        .navbar ul li a:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .toggle-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            z-index: 1001;
+        }
+
+        body.dark-mode .toggle-btn {
+            background: rgba(0, 0, 0, 0.3);
+            color: #dfe6e9;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 1.2rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            z-index: 1001;
+        }
+
+        body.dark-mode .theme-toggle {
+            background: rgba(0, 0, 0, 0.3);
+            color: #dfe6e9;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 100px auto 20px;
+            padding: 20px;
+        }
+
+        .section {
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+        }
+
+        .section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .profile .profile-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .profile img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .profile .profile-info p {
+            color: #636e72;
+            font-size: 0.9rem;
+            margin: 5px 0;
+        }
+
+        body.dark-mode .profile .profile-info p {
+            color: #b2bec3;
+        }
+
+        .questions select {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #2d3436;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        body.dark-mode .questions select {
+            background: rgba(0, 0, 0, 0.3);
+            color: #dfe6e9;
+        }
+
+        .questions .question-list {
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .questions .question-list.active {
+            display: block;
+        }
+
+        .questions .question-item {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.05);
+        }
+
+        .internal-marks table, .semester-marks table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .internal-marks th, .internal-marks td,
+        .semester-marks th, .semester-marks td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .internal-marks th,
+        body.dark-mode .internal-marks td,
+        body.dark-mode .semester-marks th,
+        body.dark-mode .semester-marks td {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .semester-marks .question-details {
+            margin-top: 20px;
+        }
+
+        .semester-marks .question-details p {
+            font-size: 0.9rem;
+            margin: 5px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin-top: 120px;
+                padding: 10px;
+            }
+
+            .site-title {
+                font-size: 1.5rem;
+            }
+
+            .section h2 {
+                font-size: 1.3rem;
+            }
+
+            .profile img {
+                width: 60px;
+                height: 60px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar {
+                width: 200px;
+                left: -200px;
+            }
+
+            .toggle-btn, .theme-toggle {
+                top: 15px;
+                padding: 8px;
+            }
+
+            .profile .profile-info {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .site-title {
+                font-size: 1.2rem;
+                top: 15px;
+            }
+
+            .internal-marks table, .semester-marks table {
+                font-size: 0.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="site-title">
+        <span>E</span><span>D</span><span>U</span><span>T</span><span>R</span><span>A</span><span>C</span><span>K</span>
+    </div>
+
+    <button class="toggle-btn" onclick="toggleMenu()">☰</button>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
+    <nav class="navbar" id="navbar">
+        <ul>
+            <li><a onclick="showSection('profile')">Profile</a></li>
+            <li><a onclick="showSection('questions')">Question Mapping</a></li>
+            <li><a onclick="showSection('internal-marks')">Internal Marks</a></li>
+            <li><a onclick="showSection('semester-marks')">Semester Marks</a></li>
+            <li><a href="#" onclick="logout()">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="section profile active" id="profile">
+            <h2>Profile</h2>
+            <div class="profile-info">
+                <img src="https://via.placeholder.com/80" alt="Profile Picture">
+                <div>
+                    <p id="name"><strong>Name:</strong>&nbsp;</p>
+                    <p><strong>Designation:</strong> Assistant Professor</p>
+                    <p id="phoneNo"><strong>Phone No.:</strong>&nbsp;</p>
+                    <p><strong>Email Id:</strong> smahapatra_etc@vssut.ac.in</p>
+                    <p id="department"><strong>Department:</strong>&nbsp;</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section questions" id="questions">
+            <h2>Question Mapping (Basic Electronics)</h2>
+            <select onchange="showQuestions(this.value)">
+                <option value="">Select Module</option>
+                <option value="semiconductor-physics">Semiconductor Physics</option>
+                <option value="jfet-ic">JFET and Integrated Circuit</option>
+                <option value="feedback-opamp">Feedback Amplifier and Op-Amp</option>
+                <option value="digital-electronics">Digital Electronics</option>
+                <option value="electronic-instruments">Electronic Instruments</option>
+            </select>
+            <div class="question-list" id="semiconductor-physics">
+                <div class="question-item">Two-Mark: What is the energy band gap in semiconductors?</div>
+                <div class="question-item">Two-Mark: Explain the difference between intrinsic and extrinsic semiconductors.</div>
+                <div class="question-item">Two-Mark: Define drift and diffusion currents in a PN junction.</div>
+                <div class="question-item">Four-Mark: Derive the expression for the depletion region width in a PN junction.</div>
+                <div class="question-item">Four-Mark: Explain the working of a Zener diode with its V-I characteristics.</div>
+                <div class="question-item">Four-Mark: Discuss the effect of doping on semiconductor conductivity.</div>
+            </div>
+            <div class="question-list" id="jfet-ic">
+                <div class="question-item">Two-Mark: What is the pinch-off voltage in a JFET?</div>
+                <div class="question-item">Two-Mark: Define transconductance in a JFET.</div>
+                <div class="question-item">Two-Mark: What is the role of the gate in a JFET?</div>
+                <div class="question-item">Four-Mark: Explain the operation of a JFET as an amplifier.</div>
+                <div class="question-item">Four-Mark: Discuss the advantages of integrated circuits over discrete circuits.</div>
+                <div class="question-item">Four-Mark: Describe the fabrication process of a monolithic IC.</div>
+            </div>
+            <div class="question-list" id="feedback-opamp">
+                <div class="question-item">Two-Mark: What is negative feedback in amplifiers?</div>
+                <div class="question-item">Two-Mark: Define the gain-bandwidth product of an op-amp.</div>
+                <div class="question-item">Two-Mark: What is the significance of virtual ground in an op-amp?</div>
+                <div class="question-item">Four-Mark: Derive the gain expression for an inverting op-amp configuration.</div>
+                <div class="question-item">Four-Mark: Explain the operation of a differential amplifier using op-amps.</div>
+                <div class="question-item">Four-Mark: Discuss the effect of feedback on amplifier stability.</div>
+            </div>
+            <div class="question-list" id="digital-electronics">
+                <div class="question-item">Two-Mark: What is a universal gate? Give an example.</div>
+                <div class="question-item">Two-Mark: Define propagation delay in logic gates.</div>
+                <div class="question-item">Two-Mark: What is the function of a D flip-flop?</div>
+                <div class="question-item">Four-Mark: Design a 4-bit binary counter using JK flip-flops.</div>
+                <div class="question-item">Four-Mark: Explain the working of a full adder circuit with truth table.</div>
+                <div class="question-item">Four-Mark: Discuss the differences between combinational and sequential circuits.</div>
+            </div>
+            <div class="question-list" id="electronic-instruments">
+                <div class="question-item">Two-Mark: What is the purpose of a CRO?</div>
+                <div class="question-item">Two-Mark: Define sensitivity in a digital multimeter.</div>
+                <div class="question-item">Two-Mark: What is a signal generator?</div>
+                <div class="question-item">Four-Mark: Explain the working of a digital storage oscilloscope.</div>
+                <div class="question-item">Four-Mark: Discuss the calibration process of a multimeter.</div>
+                <div class="question-item">Four-Mark: Describe the operation of a function generator with block diagram.</div>
+            </div>
+        </div>
+
+        <div class="section internal-marks" id="internal-marks">
+            <h2>Internal Marks (Basic Electronics)</h2>
+            <table>
+                <tr><th>Sl.No.</th><th>Regd.No.</th><th>Name</th><th>Marks (Out of 20)</th></tr>
+                <tr><td>1</td><td>2402040001</td><td>VIDYOSHAH BEHERA</td><td>16</td></tr>
+                <tr><td>2</td><td>2402040002</td><td>SOURAV NAIK</td><td>17</td></tr>
+                <tr><td>3</td><td>2402040003</td><td>SATYAM KUMAR DASH</td><td>18</td></tr>
+                <tr><td>4</td><td>2402040004</td><td>ARPAN AGRAWAL</td><td>16</td></tr>
+                <tr><td>5</td><td>2402040005</td><td>ADITYA KUMAR NAHAK</td><td>19</td></tr>
+                <tr><td>6</td><td>2402040006</td><td>JAMI SIDDHARTH</td><td>17</td></tr>
+                <tr><td>7</td><td>2402040007</td><td>AURO ASHISH</td><td>18</td></tr>
+                <tr><td>8</td><td>2402040008</td><td>PINAKI MOHANTY</td><td>19</td></tr>
+                <tr><td>9</td><td>2402040009</td><td>NIRANJAN MAHANTA - TFW</td><td>16</td></tr>
+                <tr><td>10</td><td>2402040010</td><td>SAMITESH PANDA</td><td>17</td></tr>
+                <tr><td>11</td><td>2402040011</td><td>AKASH CHOUDHARY - TFW</td><td>18</td></tr>
+                <tr><td>12</td><td>2402040012</td><td>MUZAMMIL AKHTAR</td><td>16</td></tr>
+                <tr><td>13</td><td>2402040013</td><td>LITU BISWAL</td><td>19</td></tr>
+                <tr><td>14</td><td>2402040014</td><td>SOMESH CHANDRA BEHERA</td><td>17</td></tr>
+                <tr><td>15</td><td>2402040015</td><td>SWASTIKA SAMANT</td><td>18</td></tr>
+                <tr><td>16</td><td>2402040016</td><td>BHARATI MEHER</td><td>16</td></tr>
+                <tr><td>17</td><td>2402040017</td><td>NIHAR RANJAN JENA</td><td>19</td></tr>
+                <tr><td>18</td><td>2402040018</td><td>ASHUTOSH PAHADSINGH</td><td>17</td></tr>
+                <tr><td>19</td><td>2402040019</td><td>PARSHURAM DAS</td><td>18</td></tr>
+                <tr><td>20</td><td>2402040020</td><td>ADYASHA ANURUPA</td><td>16</td></tr>
+                <tr><td>21</td><td>2402040021</td><td>SWATI SUCHARITA MOHAPATRA</td><td>19</td></tr>
+                <tr><td>22</td><td>2402040022</td><td>PIYUSH MISHRA</td><td>17</td></tr>
+                <tr><td>23</td><td>2402040023</td><td>SAMBHAV SHADANGI</td><td>18</td></tr>
+                <tr><td>24</td><td>2402040024</td><td>SURAJ KUMAR SAHU - TFW</td><td>16</td></tr>
+                <tr><td>25</td><td>2402040025</td><td>NANDKISHOR BEHERA</td><td>19</td></tr>
+                <tr><td>26</td><td>2402040026</td><td>BISWAJIT BALIARSINGH</td><td>17</td></tr>
+                <tr><td>27</td><td>2402040027</td><td>ARIJITA SAMAL</td><td>18</td></tr>
+                <tr><td>28</td><td>2402040028</td><td>DEBASISH PRADHAN</td><td>16</td></tr>
+                <tr><td>29</td><td>2402040029</td><td>MONO TUDU</td><td>19</td></tr>
+                <tr><td>30</td><td>2402040030</td><td>TAGAR MEHER</td><td>17</td></tr>
+                <tr><td>31</td><td>2402040031</td><td>HEMANT PUJARI</td><td>18</td></tr>
+                <tr><td>32</td><td>2402040032</td><td>PRATYUSH PARIDA</td><td>16</td></tr>
+                <tr><td>33</td><td>2402040033</td><td>SIJAL PANDA</td><td>19</td></tr>
+                <tr><td>34</td><td>2402040034</td><td>SHREEYA SMITA DORA</td><td>17</td></tr>
+                <tr><td>35</td><td>2402040035</td><td>SHASWAT RANJAN HOTA</td><td>18</td></tr>
+                <tr><td>36</td><td>2402040036</td><td>CH ABHIJEET ACHARY</td><td>16</td></tr>
+                <tr><td>37</td><td>2402040037</td><td>SUDHANSU SEKHAR JENA</td><td>19</td></tr>
+                <tr><td>38</td><td>2402040038</td><td>RUDRA NARAYAN MANGARAJ</td><td>17</td></tr>
+                <tr><td>39</td><td>2402040039</td><td>DEBIDUTTA SAHOO</td><td>18</td></tr>
+                <tr><td>40</td><td>2402040040</td><td>BARUN KUMAR PUJARI</td><td>16</td></tr>
+                <tr><td>41</td><td>2402040041</td><td>BHABANA AGRAWAL</td><td>19</td></tr>
+                <tr><td>42</td><td>2402040042</td><td>SUBHALAXMI DASH - TFW</td><td>17</td></tr>
+                <tr><td>43</td><td>2402040043</td><td>SHUBHAM PRADHAN</td><td>18</td></tr>
+                <tr><td>44</td><td>2402040044</td><td>ANIMESH KINDO</td><td>16</td></tr>
+                <tr><td>45</td><td>2402040045</td><td>ABHISHEK KUMAR TIWARI</td><td>19</td></tr>
+                <tr><td>46</td><td>2402040046</td><td>ABHISEK SINGH</td><td>17</td></tr>
+                <tr><td>47</td><td>2402040047</td><td>PRITIMOHAN BEHERA</td><td>18</td></tr>
+                <tr><td>48</td><td>2402040048</td><td>DEBENDRA BARIK</td><td>16</td></tr>
+                <tr><td>49</td><td>2402040049</td><td>RANA PRATAP SARANGI</td><td>19</td></tr>
+                <tr><td>50</td><td>2402040050</td><td>SUBHASHREE SAHU</td><td>17</td></tr>
+                <tr><td>51</td><td>2402040051</td><td>AMIT KUMAR NAYAK</td><td>18</td></tr>
+                <tr><td>52</td><td>2402040052</td><td>SAUMYA RANJAN BEHERA</td><td>16</td></tr>
+                <tr><td>53</td><td>2402040053</td><td>MEGHANATH JADIA</td><td>19</td></tr>
+                <tr><td>54</td><td>2402040054</td><td>JITENDRA KUMAR JENA</td><td>17</td></tr>
+                <tr><td>55</td><td>2402040055</td><td>SNEHANSHU KAR</td><td>18</td></tr>
+                <tr><td>56</td><td>2402040056</td><td>SAMARTH MISHRA</td><td>16</td></tr>
+                <tr><td>57</td><td>2402040057</td><td>SIMON MEHER</td><td>19</td></tr>
+                <tr><td>58</td><td>2402040058</td><td>ROHIT BARAD</td><td>17</td></tr>
+                <tr><td>59</td><td>2402040059</td><td>SOUMYAJIT BEHERA</td><td>18</td></tr>
+                <tr><td>60</td><td>2402040060</td><td>PITAMBAR PANDA</td><td>20</td></tr>
+                <tr><td>61</td><td>2402040061</td><td>SUSAMA SURAJ SINGH</td><td>16</td></tr>
+                <tr><td>62</td><td>2402040062</td><td>ABHISHEK ACHARYA</td><td>19</td></tr>
+                <tr><td>63</td><td>2402040063</td><td>AISHWARYA PRIYADARSHINI PATRA</td><td>17</td></tr>
+                <tr><td>64</td><td>2402040064</td><td>SUVAM NAYAK</td><td>18</td></tr>
+                <tr><td>65</td><td>2402040065</td><td>SHIMADRI ABHINASH</td><td>16</td></tr>
+                <tr><td>66</td><td>2402040066</td><td>NITISH KUMAR GIRI</td><td>19</td></tr>
+                <tr><td>67</td><td>2402040067</td><td>SABYASACHEE SAHOO</td><td>17</td></tr>
+                <tr><td>68</td><td>2402040068</td><td>PRAGATI SHALINI</td><td>18</td></tr>
+                <tr><td>69</td><td>2402040069</td><td>ELE CHRIST EKKA</td><td>16</td></tr>
+                <tr><td>70</td><td>2402040070</td><td>PRADIP KUMAR PATI</td><td>19</td></tr>
+                <tr><td>71</td><td>2402040071</td><td>BHAKTI CHARAN BEHERA</td><td>17</td></tr>
+                <tr><td>72</td><td>2402040072</td><td>RUPESH KUMAR BHUYAN</td><td>18</td></tr>
+                <tr><td>73</td><td>2402040073</td><td>VYSYARAJU HANSUJA</td><td>16</td></tr>
+                <tr><td>74</td><td>2402040074</td><td>AKASH BEHERA</td><td>19</td></tr>
+                <tr><td>75</td><td>2402040075</td><td>SK BAHADUR</td><td>17</td></tr>
+                <tr><td>76</td><td>2402040076</td><td>SRIYA RANI MARANDI</td><td>18</td></tr>
+                <tr><td>77</td><td>2402040077</td><td>PREETIPARNNA BEHERA</td><td>16</td></tr>
+                <tr><td>78</td><td>2402040078</td><td>ADYASHA SAHU</td><td>19</td></tr>
+            </table>
+        </div>
+
+        <div class="section semester-marks" id="semester-marks">
+            <h2>Semester Marks (Basic Electronics)</h2>
+            <div class="question-details">
+                <h3>Midsem Questions</h3>
+                <p><strong>1a (2 Marks, Module 1 - Semiconductor Physics):</strong> Define the Fermi level in a semiconductor.</p>
+                <p><strong>1b (2 Marks, Module 1 - Semiconductor Physics):</strong> What is meant by hole current in a semiconductor?</p>
+                <p><strong>1c (2 Marks, Module 4 - Digital Electronics):</strong> Explain the function of an XOR gate with its truth table.</p>
+                <p><strong>2a (4 Marks, Module 1 - Semiconductor Physics):</strong> Explain the formation of a PN junction and its barrier potential.</p>
+                <p><strong>2b (4 Marks, Module 1 - Semiconductor Physics):</strong> Discuss the effect of temperature on semiconductor resistivity.</p>
+                <p><strong>2c (4 Marks, Module 1 - Semiconductor Physics):</strong> Derive the current components in a forward-biased PN junction.</p>
+                <p><strong>3a (4 Marks, Module 4 - Digital Electronics):</strong> Design a half adder circuit and explain its operation.</p>
+                <p><strong>3b (4 Marks, Module 4 - Digital Electronics):</strong> Explain the working of a T flip-flop with its characteristic table.</p>
+                <p><strong>3c (4 Marks, Module 4 - Digital Electronics):</strong> Discuss the operation of a 3-bit asynchronous counter.</p>
+            </div>
+            <h3>Midsem Marks</h3>
+            <table>
+                <tr><th>Sl.No.</th><th>Regd.No.</th><th>Name</th><th>Marks (Out of 30)</th></tr>
+                <tr><td>1</td><td>2402040001</td><td>VIDYOSHAH BEHERA</td><td>24</td></tr>
+                <tr><td>2</td><td>2402040002</td><td>SOURAV NAIK</td><td>26</td></tr>
+                <tr><td>3</td><td>2402040003</td><td>SATYAM KUMAR DASH</td><td>27</td></tr>
+                <tr><td>4</td><td>2402040004</td><td>ARPAN AGRAWAL</td><td>25</td></tr>
+                <tr><td>5</td><td>2402040005</td><td>ADITYA KUMAR NAHAK</td><td>28</td></tr>
+                <tr><td>6</td><td>2402040006</td><td>JAMI SIDDHARTH</td><td>26</td></tr>
+                <tr><td>7</td><td>2402040007</td><td>AURO ASHISH</td><td>27</td></tr>
+                <tr><td>8</td><td>2402040008</td><td>PINAKI MOHANTY</td><td>29</td></tr>
+                <tr><td>9</td><td>2402040009</td><td>NIRANJAN MAHANTA - TFW</td><td>24</td></tr>
+                <tr><td>10</td><td>2402040010</td><td>SAMITESH PANDA</td><td>26</td></tr>
+                <tr><td>11</td><td>2402040011</td><td>AKASH CHOUDHARY - TFW</td><td>27</td></tr>
+                <tr><td>12</td><td>2402040012</td><td>MUZAMMIL AKHTAR</td><td>25</td></tr>
+                <tr><td>13</td><td>2402040013</td><td>LITU BISWAL</td><td>28</td></tr>
+                <tr><td>14</td><td>2402040014</td><td>SOMESH CHANDRA BEHERA</td><td>26</td></tr>
+                <tr><td>15</td><td>2402040015</td><td>SWASTIKA SAMANT</td><td>27</td></tr>
+                <tr><td>16</td><td>2402040016</td><td>BHARATI MEHER</td><td>24</td></tr>
+                <tr><td>17</td><td>2402040017</td><td>NIHAR RANJAN JENA</td><td>28</td></tr>
+                <tr><td>18</td><td>2402040018</td><td>ASHUTOSH PAHADSINGH</td><td>26</td></tr>
+                <tr><td>19</td><td>2402040019</td><td>PARSHURAM DAS</td><td>27</td></tr>
+                <tr><td>20</td><td>2402040020</td><td>ADYASHA ANURUPA</td><td>25</td></tr>
+                <tr><td>21</td><td>2402040021</td><td>SWATI SUCHARITA MOHAPATRA</td><td>28</td></tr>
+                <tr><td>22</td><td>2402040022</td><td>PIYUSH MISHRA</td><td>26</td></tr>
+                <tr><td>23</td><td>2402040023</td><td>SAMBHAV SHADANGI</td><td>27</td></tr>
+                <tr><td>24</td><td>2402040024</td><td>SURAJ KUMAR SAHU - TFW</td><td>24</td></tr>
+                <tr><td>25</td><td>2402040025</td><td>NANDKISHOR BEHERA</td><td>28</td></tr>
+                <tr><td>26</td><td>2402040026</td><td>BISWAJIT BALIARSINGH</td><td>26</td></tr>
+                <tr><td>27</td><td>2402040027</td><td>ARIJITA SAMAL</td><td>27</td></tr>
+                <tr><td>28</td><td>2402040028</td><td>DEBASISH PRADHAN</td><td>25</td></tr>
+                <tr><td>29</td><td>2402040029</td><td>MONO TUDU</td><td>28</td></tr>
+                <tr><td>30</td><td>2402040030</td><td>TAGAR MEHER</td><td>26</td></tr>
+                <tr><td>31</td><td>2402040031</td><td>HEMANT PUJARI</td><td>27</td></tr>
+                <tr><td>32</td><td>2402040032</td><td>PRATYUSH PARIDA</td><td>24</td></tr>
+                <tr><td>33</td><td>2402040033</td><td>SIJAL PANDA</td><td>28</td></tr>
+                <tr><td>34</td><td>2402040034</td><td>SHREEYA SMITA DORA</td><td>26</td></tr>
+                <tr><td>35</td><td>2402040035</td><td>SHASWAT RANJAN HOTA</td><td>27</td></tr>
+                <tr><td>36</td><td>2402040036</td><td>CH ABHIJEET ACHARY</td><td>25</td></tr>
+                <tr><td>37</td><td>2402040037</td><td>SUDHANSU SEKHAR JENA</td><td>28</td></tr>
+                <tr><td>38</td><td>2402040038</td><td>RUDRA NARAYAN MANGARAJ</td><td>26</td></tr>
+                <tr><td>39</td><td>2402040039</td><td>DEBIDUTTA SAHOO</td><td>27</td></tr>
+                <tr><td>40</td><td>2402040040</td><td>BARUN KUMAR PUJARI</td><td>24</td></tr>
+                <tr><td>41</td><td>2402040041</td><td>BHABANA AGRAWAL</td><td>28</td></tr>
+                <tr><td>42</td><td>2402040042</td><td>SUBHALAXMI DASH - TFW</td><td>26</td></tr>
+                <tr><td>43</td><td>2402040043</td><td>SHUBHAM PRADHAN</td><td>27</td></tr>
+                <tr><td>44</td><td>2402040044</td><td>ANIMESH KINDO</td><td>25</td></tr>
+                <tr><td>45</td><td>2402040045</td><td>ABHISHEK KUMAR TIWARI</td><td>28</td></tr>
+                <tr><td>46</td><td>2402040046</td><td>ABHISEK SINGH</td><td>26</td></tr>
+                <tr><td>47</td><td>2402040047</td><td>PRITIMOHAN BEHERA</td><td>27</td></tr>
+                <tr><td>48</td><td>2402040048</td><td>DEBENDRA BARIK</td><td>24</td></tr>
+                <tr><td>49</td><td>2402040049</td><td>RANA PRATAP SARANGI</td><td>28</td></tr>
+                <tr><td>50</td><td>2402040050</td><td>SUBHASHREE SAHU</td><td>26</td></tr>
+                <tr><td>51</td><td>2402040051</td><td>AMIT KUMAR NAYAK</td><td>27</td></tr>
+                <tr><td>52</td><td>2402040052</td><td>SAUMYA RANJAN BEHERA</td><td>25</td></tr>
+                <tr><td>53</td><td>2402040053</td><td>MEGHANATH JADIA</td><td>28</td></tr>
+                <tr><td>54</td><td>2402040054</td><td>JITENDRA KUMAR JENA</td><td>26</td></tr>
+                <tr><td>55</td><td>2402040055</td><td>SNEHANSHU KAR</td><td>27</td></tr>
+                <tr><td>56</td><td>2402040056</td><td>SAMARTH MISHRA</td><td>24</td></tr>
+                <tr><td>57</td><td>2402040057</td><td>SIMON MEHER</td><td>28</td></tr>
+                <tr><td>58</td><td>2402040058</td><td>ROHIT BARAD</td><td>26</td></tr>
+                <tr><td>59</td><td>2402040059</td><td>SOUMYAJIT BEHERA</td><td>27</td></tr>
+                <tr><td>60</td><td>2402040060</td><td>PITAMBAR PANDA</td><td>30</td></tr>
+                <tr><td>61</td><td>2402040061</td><td>SUSAMA SURAJ SINGH</td><td>24</td></tr>
+                <tr><td>62</td><td>2402040062</td><td>ABHISHEK ACHARYA</td><td>28</td></tr>
+                <tr><td>63</td><td>2402040063</td><td>AISHWARYA PRIYADARSHINI PATRA</td><td>26</td></tr>
+                <tr><td>64</td><td>2402040064</td><td>SUVAM NAYAK</td><td>27</td></tr>
+                <tr><td>65</td><td>2402040065</td><td>SHIMADRI ABHINASH</td><td>25</td></tr>
+                <tr><td>66</td><td>2402040066</td><td>NITISH KUMAR GIRI</td><td>28</td></tr>
+                <tr><td>67</td><td>2402040067</td><td>SABYASACHEE SAHOO</td><td>26</td></tr>
+                <tr><td>68</td><td>2402040068</td><td>PRAGATI SHALINI</td><td>27</td></tr>
+                <tr><td>69</td><td>2402040069</td><td>ELE CHRIST EKKA</td><td>24</td></tr>
+                <tr><td>70</td><td>2402040070</td><td>PRADIP KUMAR PATI</td><td>28</td></tr>
+                <tr><td>71</td><td>2402040071</td><td>BHAKTI CHARAN BEHERA</td><td>26</td></tr>
+                <tr><td>72</td><td>2402040072</td><td>RUPESH KUMAR BHUYAN</td><td>27</td></tr>
+                <tr><td>73</td><td>2402040073</td><td>VYSYARAJU HANSUJA</td><td>25</td></tr>
+                <tr><td>74</td><td>2402040074</td><td>AKASH BEHERA</td><td>28</td></tr>
+                <tr><td>75</td><td>2402040075</td><td>SK BAHADUR</td><td>26</td></tr>
+                <tr><td>76</td><td>2402040076</td><td>SRIYA RANI MARANDI</td><td>27</td></tr>
+                <tr><td>77</td><td>2402040077</td><td>PREETIPARNNA BEHERA</td><td>24</td></tr>
+                <tr><td>78</td><td>2402040078</td><td>ADYASHA SAHU</td><td>28</td></tr>
+            </table>
+            <h3>Endsem Marks</h3>
+            <p>Yet to happen</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    <script src="teacher_home.js"></script>
+    <script>
+        function toggleMenu() {
+            document.getElementById('navbar').classList.toggle('active');
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            toggleMenu();
+        }
+
+        function showQuestions(module) {
+            document.querySelectorAll('.question-list').forEach(list => {
+                list.classList.remove('active');
+            });
+            if (module) {
+                document.getElementById(module).classList.add('active');
+            }
+        }
+
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+</body>
+</html>

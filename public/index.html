@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDUTRACK - VSSUT Burla</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #e0eafc, #cfdef3);
+            color: #2d3436;
+            transition: background 0.5s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1e272e, #485460);
+            color: #dfe6e9;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .container:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .logo {
+            max-width: 120px;
+            margin-bottom: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.1);
+        }
+
+        .title {
+            font-size: 2.5rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .title span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: letterPop 0.5s ease forwards;
+        }
+
+        @keyframes letterPop {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .title span:nth-child(1) { animation-delay: 0.1s; }
+        .title span:nth-child(2) { animation-delay: 0.15s; }
+        .title span:nth-child(3) { animation-delay: 0.2s; }
+        .title span:nth-child(4) { animation-delay: 0.25s; }
+        .title span:nth-child(5) { animation-delay: 0.3s; }
+        .title span:nth-child(6) { animation-delay: 0.35s; }
+        .title span:nth-child(7) { animation-delay: 0.4s; }
+        .title span:nth-child(8) { animation-delay: 0.45s; }
+
+        header p {
+            font-size: 1rem;
+            margin-bottom: 30px;
+            color: #636e72;
+        }
+
+        body.dark-mode header p {
+            color: #b2bec3;
+        }
+
+        .login-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 12px 20px;
+            font-size: 1rem;
+            font-weight: 400;
+            text-decoration: none;
+            color: #fff;
+            background: linear-gradient(90deg, #0984e3, #00b894);
+            border-radius: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px;
+            font-size: 1.2rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        body.dark-mode .theme-toggle {
+            background: rgba(0, 0, 0, 0.3);
+            color: #dfe6e9;
+        }
+
+        footer {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 30px;
+            }
+
+            .title {
+                font-size: 2rem;
+            }
+
+            .logo {
+                max-width: 100px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+
+            .title {
+                font-size: 1.8rem;
+            }
+
+            .theme-toggle {
+                top: 15px;
+                right: 15px;
+                padding: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+        <img src="https://vssut.ac.in/images/logo.png" alt="VSSUT Logo" class="logo">
+        <header>
+            <div class="title">
+                <span>E</span><span>D</span><span>U</span><span>T</span><span>R</span><span>A</span><span>C</span><span>K</span>
+            </div>
+            <p>A hub for students and teachers to connect and learn.</p>
+        </header>
+        <div class="login-options">
+            <a href="teacher.html" class="btn">Teacher Login</a>
+            <a href="student.html" class="btn">Student Login</a>
+        </div>
+        <footer>EDUTRACK</footer>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - EDUTRACK</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #e0eafc, #cfdef3);
+            color: #2d3436;
+            transition: background 0.5s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1e272e, #485460);
+            color: #dfe6e9;
+        }
+
+        .site-title {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 2rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            z-index: 1002;
+        }
+
+        .site-title span {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(20px);
+            animation: letterPop 0.5s ease forwards;
+            color: #0984e3;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        body.dark-mode .site-title span {
+            color: #00b894;
+        }
+
+        @keyframes letterPop {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .site-title span:nth-child(1) { animation-delay: 0.1s; }
+        .site-title span:nth-child(2) { animation-delay: 0.15s; }
+        .site-title span:nth-child(3) { animation-delay: 0.2s; }
+        .site-title span:nth-child(4) { animation-delay: 0.25s; }
+        .site-title span:nth-child(5) { animation-delay: 0.3s; }
+        .site-title span:nth-child(6) { animation-delay: 0.35s; }
+        .site-title span:nth-child(7) { animation-delay: 0.4s; }
+        .site-title span:nth-child(8) { animation-delay: 0.45s; }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            transition: left 0.3s ease;
+            z-index: 1000;
+        }
+
+        .navbar.active {
+            left: 0;
+        }
+
+        .navbar ul {
+            list-style: none;
+            margin-top: 60px;
+        }
+
+        .navbar ul li {
+            margin: 20px 0;
+        }
+
+        .navbar ul li a {
+            color: #2d3436;
+            text-decoration: none;
+            font-size: 1.1rem;
+            display: block;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+            cursor: pointer;
+        }
+
+        body.dark-mode .navbar ul li a {
+            color: #dfe6e9;
+        }
+
+        .navbar ul li a:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .toggle-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 1.5rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            z-index: 1001;
+        }
+
+        body.dark-mode .toggle-btn {
+            background: rgba(0, 0, 0, 0.3);
+            color: #dfe6e9;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            font-size: 1.2rem;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            z-index: 1001;
+        }
+
+        body.dark-mode .theme-toggle {
+            background: rgba(0, 0, 0, 0.3);
+            color: #dfe6e9;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 100px auto 20px;
+            padding: 20px;
+        }
+
+        .section {
+            display: none;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+        }
+
+        .section h2 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .dashboard .profile {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .dashboard .profile img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .dashboard .profile-info p {
+            color: #636e72;
+            font-size: 0.9rem;
+            margin: 5px 0;
+        }
+
+        body.dark-mode .dashboard .profile-info p {
+            color: #b2bec3;
+        }
+
+        .dashboard .past-semesters {
+            margin-top: 20px;
+        }
+
+        .dashboard .past-semesters select {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #2d3436;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        body.dark-mode .dashboard .past-semesters select {
+            background: rgba(0, 0, 0, 0.3);
+            color: #dfe6e9;
+        }
+
+        .dashboard .semester-details {
+            display: none;
+        }
+
+        .dashboard .semester-details.active {
+            display: block;
+        }
+
+        .dashboard .semester-details p {
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .dashboard .semester-details table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .dashboard .semester-details th, .dashboard .semester-details td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .dashboard .semester-details th,
+        body.dark-mode .dashboard .semester-details td {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .attendance table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        .attendance th, .attendance td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .attendance th,
+        body.dark-mode .attendance td {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .attendance .progress-bar {
+            height: 10px;
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .attendance .progress {
+            height: 100%;
+            background: linear-gradient(90deg, #0984e3, #00b894);
+        }
+
+        .modules select {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #2d3436;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        body.dark-mode .modules select {
+            background: rgba(0, 0, 0, 0.3);
+            color: #dfe6e9;
+        }
+
+        .modules .module-list {
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .modules .module-list.active {
+            display: block;
+        }
+
+        .modules .module-item {
+            padding: 10px;
+            border-radius: 8px;
+            margin: 5px 0;
+        }
+
+        .modules .module-item.green { background: rgba(0, 128, 0, 0.2); }
+        .modules .module-item.yellow { background: rgba(255, 165, 0, 0.2); }
+        .modules .module-item.red { background: rgba(255, 0, 0, 0.2); }
+
+        .syllabus select {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: #2d3436;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        body.dark-mode .syllabus select {
+            background: rgba(0, 0, 0, 0.3);
+            color: #dfe6e9;
+        }
+
+        .syllabus .syllabus-list {
+            display: none;
+            font-size: 0.9rem;
+        }
+
+        .syllabus .syllabus-list.active {
+            display: block;
+        }
+
+        .syllabus .syllabus-item {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .syllabus .syllabus-item.completed {
+            background: rgba(0, 128, 0, 0.2);
+        }
+
+        .syllabus .syllabus-item.ongoing {
+            background: rgba(255, 165, 0, 0.2);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin-top: 120px;
+                padding: 10px;
+            }
+
+            .site-title {
+                font-size: 1.5rem;
+            }
+
+            .section h2 {
+                font-size: 1.3rem;
+            }
+
+            .dashboard .profile img {
+                width: 60px;
+                height: 60px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar {
+                width: 200px;
+                left: -200px;
+            }
+
+            .toggle-btn, .theme-toggle {
+                top: 15px;
+                padding: 8px;
+            }
+
+            .dashboard .profile {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .site-title {
+                font-size: 1.2rem;
+                top: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="site-title">
+        <span>E</span><span>D</span><span>U</span><span>T</span><span>R</span><span>A</span><span>C</span><span>K</span>
+    </div>
+
+    <button class="toggle-btn" onclick="toggleMenu()">☰</button>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
+    <nav class="navbar" id="navbar">
+        <ul>
+            <li><a onclick="showSection('dashboard')">Dashboard</a></li>
+            <li><a onclick="showSection('attendance')">Attendance</a></li>
+            <li><a onclick="showSection('modules')">Module Performance</a></li>
+            <li><a onclick="showSection('syllabus')">Syllabus</a></li>
+            <li><a href="#" onclick="logout()">Logout</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <div class="section dashboard active" id="dashboard">
+            <h2>Dashboard</h2>
+            <div class="profile">
+                <img src="https://via.placeholder.com/80" alt="Profile Picture">
+                <div class="profile-info">
+                    <p id="name"><strong>Name:</strong>&nbsp;</p>
+                    <p id="regdNo"><strong>Registration No:</strong>&nbsp;</p>
+                    <p><strong>Branch:</strong> Computer Science and Engineering</p>
+                    <p><strong>Section:</strong> D</p>
+                    <p><strong>Semester:</strong> 2nd</p>
+                    <p><strong>CGPA:</strong> 8.90</p>
+                </div>
+            </div>
+            <div class="past-semesters">
+                <select onchange="showSemester(this.value)">
+                    <option value="">Select Past Semester</option>
+                    <option value="sem1">1st Semester</option>
+                </select>
+                <div class="semester-details" id="sem1">
+                    <p><strong>SGPA:</strong> 8.90</p>
+                    <table>
+                        <tr><th>Subject</th><th>Marks</th></tr>
+                        <tr><td>Physics</td><td>85</td></tr>
+                        <tr><td>C and Data Structure</td><td>90</td></tr>
+                        <tr><td>Mathematics 1</td><td>88</td></tr>
+                        <tr><td>Basic Electrical</td><td>87</td></tr>
+                        <tr><td>Basic Manufacturing Process</td><td>86</td></tr>
+                        <tr><td>English</td><td>90</td></tr>
+                        <tr><td>Physics Lab</td><td>92</td></tr>
+                        <tr><td>Electrical Lab</td><td>89</td></tr>
+                        <tr><td>Programming Lab</td><td>91</td></tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="section attendance" id="attendance">
+            <h2>Attendance (2nd Semester)</h2>
+            <table>
+                <tr><th>Subject</th><th>Classes Attended</th><th>Total Classes</th><th>Percentage</th></tr>
+                <tr>
+                    <td>Chemistry</td><td>23</td><td>26</td><td>88%
+                        <div class="progress-bar"><div class="progress" style="width: 88%"></div></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Mathematics 2</td><td>24</td><td>25</td><td>96%
+                        <div class="progress-bar"><div class="progress" style="width: 96%"></div></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Basic Electronics</td><td>21</td><td>24</td><td>87%
+                        <div class="progress-bar"><div class="progress" style="width: 87%"></div></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Engineering Mechanics</td><td>22</td><td>27</td><td>81%
+                        <div class="progress-bar"><div class="progress" style="width: 81%"></div></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Universal Human Values</td><td>25</td><td>28</td><td>89%
+                        <div class="progress-bar"><div class="progress" style="width: 89%"></div></div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Basic Civil Engineering</td><td>23</td><td>25</td><td>92%
+                        <div class="progress-bar"><div class="progress" style="width: 92%"></div></div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="section modules" id="modules">
+            <h2>Module Performance</h2>
+            <select onchange="showModules(this.value)">
+                <option value="">Select Subject</option>
+                <option value="engineering-mechanics">Engineering Mechanics</option>
+                <option value="chemistry">Chemistry</option>
+                <option value="mathematics-2">Mathematics 2</option>
+                <option value="basic-civil">Basic Civil Engineering</option>
+                <option value="uhv">Universal Human Values</option>
+                <option value="basic-electronics">Basic Electronics</option>
+            </select>
+            <div class="module-list" id="engineering-mechanics">
+                <div class="module-item green">Concurrent Forces on a Plane</div>
+                <div class="module-item yellow">Friction</div>
+                <div class="module-item green">Parallel Force on a Plane</div>
+                <div class="module-item red">Rectilinear Translation</div>
+                <div class="module-item yellow">Curvilinear Translation</div>
+            </div>
+            <div class="module-list" id="chemistry">
+                <div class="module-item green">Periodic Properties</div>
+                <div class="module-item yellow">Thermodynamics</div>
+                <div class="module-item red">Spectroscopy</div>
+                <div class="module-item green">Stereochemistry</div>
+                <div class="module-item yellow">General Organic Chemistry</div>
+            </div>
+            <div class="module-list" id="mathematics-2">
+                <div class="module-item green">First Order ODE</div>
+                <div class="module-item yellow">Second Order ODE</div>
+                <div class="module-item green">Vector Calculus</div>
+                <div class="module-item red">Limit Continuity</div>
+                <div class="module-item yellow">Complex Analysis</div>
+            </div>
+            <div class="module-list" id="basic-civil">
+                <div class="module-item green">Introduction to Basic Civil Engineering</div>
+                <div class="module-item yellow">Fundamental Properties of Construction Material</div>
+                <div class="module-item green">Importance of Transportation</div>
+                <div class="module-item red">Quantity of Water</div>
+                <div class="module-item yellow">Irrigation</div>
+            </div>
+            <div class="module-list" id="uhv">
+                <div class="module-item green">Course Introduction</div>
+                <div class="module-item yellow">Understanding Harmony in Human Being, in Myself</div>
+                <div class="module-item green">Understanding Harmony in Family and Society</div>
+                <div class="module-item red">Understanding Harmony in Nature and Existence</div>
+                <div class="module-item yellow">Understanding Harmony in Nature</div>
+            </div>
+            <div class="module-list" id="basic-electronics">
+                <div class="module-item green">Semiconductor Physics</div>
+                <div class="module-item yellow">JFET and Integrated Circuit</div>
+                <div class="module-item green">Feedback Amplifier and Op-Amp</div>
+                <div class="module-item red">Digital Electronics</div>
+                <div class="module-item yellow">Electronic Instruments</div>
+            </div>
+        </div>
+
+        <div class="section syllabus" id="syllabus">
+            <h2>Syllabus Progress</h2>
+            <select onchange="showSyllabus(this.value)">
+                <option value="">Select Subject</option>
+                <option value="engineering-mechanics">Engineering Mechanics</option>
+                <option value="chemistry">Chemistry</option>
+                <option value="mathematics-2">Mathematics 2</option>
+                <option value="basic-civil">Basic Civil Engineering</option>
+                <option value="uhv">Universal Human Values</option>
+                <option value="basic-electronics">Basic Electronics</option>
+            </select>
+            <div class="syllabus-list" id="syllabus-engineering-mechanics">
+                <div class="syllabus-item completed">Concurrent Forces on a Plane <span>Completed</span></div>
+                <div class="syllabus-item completed">Friction <span>Completed</span></div>
+                <div class="syllabus-item completed">Parallel Force on a Plane <span>Completed</span></div>
+                <div class="syllabus-item completed">Rectilinear Translation <span>Completed</span></div>
+                <div class="syllabus-item ongoing">Curvilinear Translation <span>Ongoing</span></div>
+            </div>
+            <div class="syllabus-list" id="syllabus-chemistry">
+                <div class="syllabus-item completed">Periodic Properties <span>Completed</span></div>
+                <div class="syllabus-item completed">Thermodynamics <span>Completed</span></div>
+                <div class="syllabus-item completed">Spectroscopy <span>Completed</span></div>
+                <div class="syllabus-item completed">Stereochemistry <span>Completed</span></div>
+                <div class="syllabus-item ongoing">General Organic Chemistry <span>Ongoing</span></div>
+            </div>
+            <div class="syllabus-list" id="syllabus-mathematics-2">
+                <div class="syllabus-item completed">First Order ODE <span>Completed</span></div>
+                <div class="syllabus-item completed">Second Order ODE <span>Completed</span></div>
+                <div class="syllabus-item completed">Vector Calculus <span>Completed</span></div>
+                <div class="syllabus-item completed">Limit Continuity <span>Completed</span></div>
+                <div class="syllabus-item ongoing">Complex Analysis <span>Ongoing</span></div>
+            </div>
+            <div class="syllabus-list" id="syllabus-basic-civil">
+                <div class="syllabus-item completed">Introduction to Basic Civil Engineering <span>Completed</span></div>
+                <div class="syllabus-item completed">Fundamental Properties of Construction Material <span>Completed</span></div>
+                <div class="syllabus-item completed">Importance of Transportation <span>Completed</span></div>
+                <div class="syllabus-item completed">Quantity of Water <span>Completed</span></div>
+                <div class="syllabus-item ongoing">Irrigation <span>Ongoing</span></div>
+            </div>
+            <div class="syllabus-list" id="syllabus-uhv">
+                <div class="syllabus-item completed">Course Introduction <span>Completed</span></div>
+                <div class="syllabus-item completed">Understanding Harmony in Human Being, in Myself <span>Completed</span></div>
+                <div class="syllabus-item completed">Understanding Harmony in Family and Society <span>Completed</span></div>
+                <div class="syllabus-item completed">Understanding Harmony in Nature and Existence <span>Completed</span></div>
+                <div class="syllabus-item ongoing">Understanding Harmony in Nature <span>Ongoing</span></div>
+            </div>
+            <div class="syllabus-list" id="syllabus-basic-electronics">
+                <div class="syllabus-item completed">Semiconductor Physics <span>Completed</span></div>
+                <div class="syllabus-item completed">JFET and Integrated Circuit <span>Completed</span></div>
+                <div class="syllabus-item completed">Feedback Amplifier and Op-Amp <span>Completed</span></div>
+                <div class="syllabus-item completed">Digital Electronics <span>Completed</span></div>
+                <div class="syllabus-item ongoing">Electronic Instruments <span>Ongoing</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jwt-decode@3.1.2/build/jwt-decode.min.js"></script>
+    <script src="student_home.js"></script>
+    <script>
+        function toggleMenu() {
+            document.getElementById('navbar').classList.toggle('active');
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+            toggleMenu();
+        }
+
+        function showSemester(semester) {
+            document.querySelectorAll('.semester-details').forEach(detail => {
+                detail.classList.remove('active');
+            });
+            if (semester) {
+                document.getElementById(semester).classList.add('active');
+            }
+        }
+
+        function showModules(subject) {
+            document.querySelectorAll('.module-list').forEach(list => {
+                list.classList.remove('active');
+            });
+            if (subject) {
+                document.getElementById(subject).classList.add('active');
+            }
+        }
+
+        function showSyllabus(subject) {
+            document.querySelectorAll('.syllabus-list').forEach(list => {
+                list.classList.remove('active');
+            });
+            if (subject) {
+                document.getElementById('syllabus-' + subject).classList.add('active');
+            }
+        }
+
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+    </script>
+</body>
+</html>
